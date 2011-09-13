@@ -1,6 +1,7 @@
 require 'open-uri'
 require 'mini_magick'
 require 'nokogiri'
+require 'json'
 
 class Picture
 
@@ -12,11 +13,16 @@ class Picture
     end
   end
 
-  def self.get_image_url(servicio, page_url)
+  def self.get_image_url(page_url)
     begin
-      case servicio
-        when 'twitpic': Nokogiri::HTML(open(page_url)).at_css("#photo-display")['src']
-        when 'yfrog': Nokogiri::HTML(open(page_url)).at_css("#main_image")['src']
+      if page_url.match('twitpic.com')
+        return Nokogiri::HTML(open(page_url)).at_css("#photo-display")['src']
+      elsif page_url.match('yfrog.com')
+        return Nokogiri::HTML(open(page_url)).at_css("#main_image")['src']
+      elsif page_url.match('twitter.com')
+        id = page_url.match(/status\/([^\/]*)\//)[1]
+        json = JSON.parse(open("http://api.twitter.com/1/statuses/show.json?include_entities=true&contributor_details=true&id=#{id}").read)
+        return json["entities"]["media"][0]["media_url"]
       end
     rescue
       puts "Error al descargar HTML de pagina de imagen"
