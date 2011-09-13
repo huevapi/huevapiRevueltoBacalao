@@ -12,11 +12,14 @@ class Picture
     end
   end
 
-  def self.get_image_url(page_url)
+  def self.get_image_url(servicio, page_url)
     begin
-      Nokogiri::HTML(open(page_url)).at_css("#photo-display")['src']
+      case servicio
+        when 'twitpic': Nokogiri::HTML(open(page_url)).at_css("#photo-display")['src']
+        when 'yfrog': Nokogiri::HTML(open(page_url)).at_css("#main_image")['src']
+      end
     rescue
-      puts "Error al descargar HTML de página de imagen"
+      puts "Error al descargar HTML de pagina de imagen"
     end
   end
 
