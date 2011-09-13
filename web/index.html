@@ -1,0 +1,545 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!-- Consider adding an manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/b/378 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title></title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- CSS: implied media=all -->
+  <!-- CSS concatenated and minified via ant build script-->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- end CSS-->
+  
+  <script src="/js/dojo/dojo.js" type="text/javascript"></script>
+  <script src="/js/RectanglePacker.js" type="text/javascript"></script>
+  
+</head>
+
+<body>
+
+  <div id="container">
+    <header>
+        <h1>Image Cloud</h1>
+    </header>
+    <div id="main" role="main">
+        <div id="canvasContainer">
+            <div id="canvas"></div>
+        </div>
+    </div>
+    <footer>
+    </footer>
+  </div> <!--! end of #container -->
+  
+  <script>
+    
+    dojo.addOnLoad(function() {
+                 
+        dojo.require('dojo.io.script');
+        dojo.require("dojo.window");
+        
+                 
+        dojo.xhrGet({
+            url: "http://localhost/proxy.php",
+            handleAs: "json",
+            load: function(data) {
+
+                console.log(data);
+
+
+                // Get the viewport-size of the document:
+                var vs = dojo.window.getBox();
+
+                vs.w = vs.w - 50;
+                vs.h = vs.h - 200;
+
+                dojo.style(dojo.byId('canvasContainer'), 'width', vs.w);
+                dojo.style(dojo.byId('canvasContainer'), 'height', vs.h);
+
+/*                var image_data = [];
+                
+                for (i = 0; i < data.images.length; i++) {
+                    image_data[image_data.length] = data.images[i];
+                }*/
+
+                var image_data = [
+                    {
+                        url: 'http://s1.proxy04.twitpic.com/photos/large/396558902.jpg',
+                        link_url: 'http://twitter.com/#!/27bslash6/status/103841853576712192',
+                        width: 1024,
+                        height: 683,
+                        weight: 3
+                    }
+                ]
+                
+                var image_data = []
+                
+//                console.log(image_data);
+                 
+                 var node = {}
+                 
+                for (i = 0; i < 15; i++) {
+                    
+                    node = {
+                        url: data.images[i].url,
+                        link_url: data.images[i].link_url,
+
+                        width: data.images[i].width,
+                        height: data.images[i].height,
+                        weight: data.images[i].weight,
+
+//                        width: 640,
+//                        height: 480,
+//                        weight: 5
+
+                    }
+                    
+//                    if (node.width == 123) {
+                        node.width = 640;
+                        node.height = 480;
+  //                  }
+                    
+                    image_data[image_data.length] = node;
+                    
+                }
+                
+                
+/*                var image_data = [{"width":123,"height":123,"url":"http://s1.proxy04.twitpic.com/photos/large/396558902.jpg","link_url":"http://twitter.com/#!/27bslash6/status/103841853576712192","weight":3},{"width":600,"height":450,"url":"http://s1.proxy03.twitpic.com/photos/large/396581605.jpg","link_url":"#http://twitter.com/#!/Ggzalo/status/{clean_tweet_ids[i]}","weight":4},{"width":600,"height":450,"url":"http://s1.proxy05.twitpic.com/photos/large/396536631.jpg","link_url":"#http://twitter.com/#!/UpPato/status/{clean_tweet_ids[i]}","weight":4},{"width":360,"height":400,"url":"http://s3.amazonaws.com/twitpic/photos/full/396532493.jpg?AWSAccessKeyId=AKIAJF3XCCKACR3QDMOA&Expires=1315882751&Signature=sPodf50%2B2hv4%2FdinAuH3u6cusEA%3D","link_url":"#http://twitter.com/#!/etallard/status/{clean_tweet_ids[i]}","weight":4},{"width":600,"height":448,"url":"http://s1.proxy03.twitpic.com/photos/large/396505687.jpg","link_url":"#http://twitter.com/#!/lorenzojavier7/status/{clean_tweet_ids[i]}","weight":4},{"width":600,"height":448,"url":"http://s1.proxy03.twitpic.com/photos/large/396505687.jpg","link_url":"#http://twitter.com/#!/RNE_CHARLIE_IX/status/{clean_tweet_ids[i]}","weight":4},{"width":600,"height":450,"url":"http://s1.proxy03.twitpic.com/photos/large/396581605.jpg","link_url":"http://twitter.com/#!/Ggzalo/status/113414107566313474","weight":4},{"width":600,"height":450,"url":"http://s1.proxy05.twitpic.com/photos/large/396536631.jpg","link_url":"http://twitter.com/#!/UpPato/status/113394967069724674","weight":1},{"width":360,"height":400,"url":"http://s3.amazonaws.com/twitpic/photos/full/396532493.jpg?AWSAccessKeyId=AKIAJF3XCCKACR3QDMOA&Expires=1315883304&Signature=uSNiihbGw00ulD7Y%2BMghYV6jtoA%3D","link_url":"http://twitter.com/#!/etallard/status/113391597722406913","weight":4},{"width":600,"height":448,"url":"http://s1.proxy03.twitpic.com/photos/large/396505687.jpg","link_url":"http://twitter.com/#!/lorenzojavier7/status/113381726927060992","weight":5},{"width":600,"height":448,"url":"http://s1.proxy03.twitpic.com/photos/large/396505687.jpg","link_url":"http://twitter.com/#!/RNE_CHARLIE_IX/status/113380512885772288","weight":5},{"width":480,"height":640,"url":"http://s3.amazonaws.com/twitpic/photos/full/396508325.jpg?AWSAccessKeyId=AKIAJF3XCCKACR3QDMOA&Expires=1315883308&Signature=ww0EoevZPxk55NjZBU7Cxm%2BezZw%3D","link_url":"http://twitter.com/#!/JACO_one/status/113380510675382272","weight":6},{"width":600,"height":448,"url":"http://s1.proxy03.twitpic.com/photos/large/396505687.jpg","link_url":"http://twitter.com/#!/lorenzojavier7/status/113381726927060992","weight":4},{"width":600,"height":448,"url":"http://s1.proxy03.twitpic.com/photos/large/396505687.jpg","link_url":"http://twitter.com/#!/RNE_CHARLIE_IX/status/113380512885772288","weight":4},{"width":600,"height":448,"url":"http://s1.proxy03.twitpic.com/photos/large/396505687.jpg","link_url":"http://twitter.com/#!/RNE_CHARLIE_IX/status/113380512885772288","weight":0},{"width":600,"height":448,"url":"http://s1.proxy03.twitpic.com/photos/large/396505687.jpg","link_url":"http://twitter.com/#!/RNE_CHARLIE_IX/status/113380512885772288","weight":6}]
+*/
+                console.log(image_data);
+
+//                var image_data = data.images;
+
+//            console.log(data.images);
+
+/*
+               var image_data = [
+                    {
+                        url: 'http://localhost/test_images/boston.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 683,
+                        weight: 3
+                    },
+                    {
+                        url: 'http://localhost/test_images/costaricafrog.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 768,
+                        weight: 7
+                    },
+                    {
+                        url: 'http://localhost/test_images/parakeet.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 768,
+                        weight: 5
+                    },
+                    {
+                        url: 'http://localhost/test_images/396536631.jpg',
+                        link_url: 'http://localhost/',
+                        width: 600,
+                        height: 450,
+                        weight: 10
+                    },
+                    {
+                        url: 'http://localhost/test_images/boston.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 683,
+                        weight: 3
+                    },
+                    {
+                        url: 'http://localhost/test_images/costaricafrog.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 768,
+                        weight: 7
+                    },
+                    {
+                        url: 'http://localhost/test_images/parakeet.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 768,
+                        weight: 5
+                    },
+                    {
+                        url: 'http://localhost/test_images/396536631.jpg',
+                        link_url: 'http://localhost/',
+                        width: 600,
+                        height: 450,
+                        weight: 10
+                    },
+                    {
+                        url: 'http://localhost/test_images/boston.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 683,
+                        weight: 3
+                    },
+                    {
+                        url: 'http://localhost/test_images/costaricafrog.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 768,
+                        weight: 7
+                    },          
+                    {
+                        url: 'http://localhost/test_images/parakeet.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 768,
+                        weight: 5
+                    },
+                    {
+                        url: 'http://localhost/test_images/396536631.jpg',
+                        link_url: 'http://localhost/',
+                        width: 600,
+                        height: 450,
+                        weight: 10
+                    },              
+                    {
+                        url: 'http://localhost/test_images/boston.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 683,
+                        weight: 3
+                    },
+                    {
+                        url: 'http://localhost/test_images/costaricafrog.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 768,
+                        weight: 7
+                    },
+                    {
+                        url: 'http://localhost/test_images/parakeet.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 768,
+                        weight: 5
+                    },
+                    {
+                        url: 'http://localhost/test_images/396536631.jpg',
+                        link_url: 'http://localhost/',
+                        width: 600,
+                        height: 450,
+                        weight: 10
+                    },
+                    {
+                        url: 'http://localhost/test_images/boston.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 683,
+                        weight: 3
+                    },
+                    {
+                        url: 'http://localhost/test_images/costaricafrog.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 768,
+                        weight: 7
+                    },
+                    {
+                        url: 'http://localhost/test_images/parakeet.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 768,
+                        weight: 5
+                    },
+                    {
+                        url: 'http://localhost/test_images/396536631.jpg',
+                        link_url: 'http://localhost/',
+                        width: 600,
+                        height: 450,
+                        weight: 10
+                    },
+                    {
+                        url: 'http://localhost/test_images/boston.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 683,
+                        weight: 3
+                    },
+                    {
+                        url: 'http://localhost/test_images/costaricafrog.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 768,
+                        weight: 7
+                    },          
+                    {
+                        url: 'http://localhost/test_images/parakeet.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 768,
+                        weight: 5
+                    },
+                    {
+                        url: 'http://localhost/test_images/396536631.jpg',
+                        link_url: 'http://localhost/',
+                        width: 600,
+                        height: 450,
+                        weight: 10
+                    },
+                    {
+                        url: 'http://localhost/test_images/boston.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 683,
+                        weight: 3
+                    },
+                    {
+                        url: 'http://localhost/test_images/costaricafrog.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 768,
+                        weight: 7
+                    },
+                    {
+                        url: 'http://localhost/test_images/parakeet.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 768,
+                        weight: 5
+                    },
+                    {
+                        url: 'http://localhost/test_images/396536631.jpg',
+                        link_url: 'http://localhost/',
+                        width: 600,
+                        height: 450,
+                        weight: 10
+                    },
+                    {
+                        url: 'http://localhost/test_images/boston.jpg',
+                        link_url: 'http://localhost/',
+                        width: 1024,
+                        height: 683,
+                        weight: 3
+                    }        
+               ]*/
+               
+               var image_data = [];
+               
+               for (i = 0; i < data.image_count; i++) {
+                   image_data[image_data.length] = {
+                       url: 'http://localhost/test_images/boston.jpg',
+                       link_url: 'http://localhost/',
+                       width: 1024,
+                       height: 683,
+                       weight: 3
+                   }
+               }
+               
+               
+                               for (i = 0; i < image_data.length; i++) {
+
+                                   node = {
+                                       url: data.images[i].url,
+                                       link_url: data.images[i].link_url,
+
+                                       width: data.images[i].width,
+                                       height: data.images[i].height,
+                                       weight: data.images[i].weight,
+
+               //                        width: 640,
+               //                        height: 480,
+               //                        weight: 5
+
+                                   }
+
+               //                    if (node.width == 123) {
+                                       node.width = 640;
+                                       node.height = 480;
+                 //                  }
+
+                                   image_data[i].url = data.images[i].url;
+                                   image_data[i].weight = data.images[i].weight;
+                                   image_data[i].link_url = data.images[i].link_url;
+                                   
+
+                               }               
+
+//                var sizes = [100,110,120,130,140,150,160,170,180,190,200]
+//                var sizes = [100,110,120,130,140,150,160,170,180,190,200]
+                var sizes = [100,120,140,160,180,200,220,240,260,280,300]
+
+            	var params = {};
+
+            	params.canvasWidth = vs.w;
+            	params.canvasHeight = vs.h;
+
+            	params.blocks = 10;
+
+            	params.sort = 'magic';
+
+            	// sort functions
+            	var sorting = {
+            		'none'	: function (a,b) { return  0 },
+            		'width'	: function (a,b) { return a.w - b.w },
+            		'height': function (a,b) { return a.h - b.h },
+            		'area'  : function (a,b) { return a.w*a.h - b.w*b.h },
+            		'magic' : function (a,b) { return Math.max(a.w,a.h) - Math.max(b.w,b.h) }
+            	}		
+
+            	// create the random sized blocks
+            	var blocks = []
+
+                    for (var i = 0; i < image_data.length; i++) {
+
+                        var item = image_data[i];
+
+                        item.weight = Math.floor(Math.random() * 10) + 1;
+
+                    var block = {
+                        w: sizes[(item.weight - 1)],
+                        h: Math.floor(sizes[(item.weight - 1)] * (item.height / item.width))
+                    }
+
+/*
+
+                        if (item.width > item.height) {
+
+                            var block = {
+                                w: sizes[(item.weight - 1)],
+                                h: Math.floor(sizes[(item.weight - 1)] * (item.height / item.width))
+                            }
+
+                        } else {
+
+                            var block = {
+                                w: sizes[(item.weight - 1)],
+                                h: Math.floor(sizes[(item.weight - 1)] * (item.height / item.width))
+                            }
+
+                        }*/
+
+                        block.url = item.url;
+                        block.link_url = item.link_url;
+
+                        blocks[i] = block;
+
+                    }
+
+
+
+
+
+
+            	// perform the selected sort algorithm and reverse the result if needed	
+            	blocks.sort( sorting[ params.sort ] );		
+
+            	// create the Rectangle Packer object
+            	var packer = new NETXUS.RectanglePacker( params.canvasWidth, params.canvasHeight );
+
+            	var coords;
+            	// process all the blocks
+            	for (var i=0; i<blocks.length; i++) {
+            		// obtain the coordinates for the current block
+            		coords = packer.findCoords( blocks[i].w, blocks[i].h );
+            		if (coords) {
+            			blocks[i].x = coords.x;
+            			blocks[i].y = coords.y;
+            		} else {
+            			blocks[i].noFit = true;
+            		} 			
+            	}
+
+
+            	var el,
+            		blkEl,
+            		liEl,
+            		canvasEl = document.getElementById('canvas');
+
+            	// remove the current blocks from the canvas element
+            	while (canvasEl.hasChildNodes())
+            		canvasEl.removeChild(canvasEl.firstChild);
+
+            	// configure the canvas element
+            	canvasEl.style.position = 'relative';
+            	canvasEl.style.width = params.canvasWidth + 'px';
+            	canvasEl.style.height = params.canvasHeight + 'px';
+
+
+            	var colors = [ 
+            		'#B02B2C', '#d15600', '#c79810', '#73880a', '#6bba70', '#3f4c6b', '#356aa0', '#d01f3c' 
+            	];
+
+            	var totalArea = 0,
+            		fitted = 0,
+            		// IE messes the width and height adding the borders into the calculations
+            		// we use this flag to adapt the calculations
+            		notIE = /*@cc_on!@*/true;
+
+            	for (var i=0; i<blocks.length; i++) {
+
+            		// check if the block was rejected
+            		if (blocks[i].noFit) {
+            			// add the dimensions to the non fitted list
+        //    			liEl = document.createElement('LI');
+        //    			liEl.appendChild( document.createTextNode( blocks[i].w + 'x' + blocks[i].h ) );
+        //    			noFitEl.appendChild(liEl);
+
+            			continue;
+            		}
+
+            		// count this block as succesfully included 
+            		fitted++;
+
+            		// sum up this block area to the total area for statistics
+            		totalArea += blocks[i].w * blocks[i].h;
+
+            		// create the new block and style it
+            		blkEl = document.createElement('DIV');
+            		blkEl.style.border = '1px solid white';
+            		//blkEl.style.background = colors[ i % colors.length ];
+            		blkEl.style.background = '#fff';
+            		blkEl.style.position = 'absolute';
+            		blkEl.style.top = blocks[i].y + 'px';
+            		blkEl.style.left = blocks[i].x + 'px';
+            		blkEl.style.width = (blocks[i].w - 2 * parseInt(blkEl.style.borderWidth) * notIE) + 'px';
+            		blkEl.style.height = (blocks[i].h - 2 * parseInt(blkEl.style.borderWidth) * notIE) + 'px';
+
+                    var img = document.createElement('IMG');
+                    img.src = blocks[i].url;
+                    img.width = blocks[i].w;
+                    img.height = blocks[i].h;
+
+                    var a = document.createElement('A');
+                    a.href = blocks[i].link_url;
+                    a.appendChild(img);
+
+
+                    blkEl.appendChild(a);
+
+
+
+            		canvasEl.appendChild( blkEl );
+            	}
+                
+            },
+            error: function(error) {
+                
+            }
+        })
+               
+
+        
+    });
+  </script>
+  
+</body>
+</html>
