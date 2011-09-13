@@ -19,6 +19,8 @@ class Picture
         return Nokogiri::HTML(open(page_url)).at_css("#photo-display")['src']
       elsif page_url.match('yfrog.com')
         return Nokogiri::HTML(open(page_url)).at_css("#main_image")['src']
+      elsif page_url.match('imgur.com')
+        return page_url
       elsif page_url.match('twitter.com')
         id = page_url.match(/status\/([^\/]*)\//)[1]
         json = JSON.parse(open("http://api.twitter.com/1/statuses/show.json?include_entities=true&id=#{id}").read)
